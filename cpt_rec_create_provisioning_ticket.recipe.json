@@ -1,0 +1,1048 @@
+{
+  "name": "CPT [REC] | create_provisioning_ticket",
+  "description": "",
+  "version": 5,
+  "private": false,
+  "concurrency": 1,
+  "code": {
+    "number": 0,
+    "provider": "workato_recipe_function",
+    "name": "execute",
+    "as": "23a85e5f",
+    "keyword": "trigger",
+    "input": {
+      "parameters_schema_json": "[{\"name\":\"employee_email\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Employee email\"},{\"name\":\"reservation_id\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Reservation ID\"},{\"name\":\"priority\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Priority\"},{\"name\":\"items\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Items\"}]",
+      "result_schema_json": "[{\"name\":\"ticket_key\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Ticket key\"},{\"name\":\"ticket_url\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Ticket URL\"},{\"name\":\"status\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Status\"},{\"name\":\"reservation_id\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Reservation ID\"}]"
+    },
+    "extended_output_schema": [
+      {
+        "label": "Parameters",
+        "name": "parameters",
+        "properties": [
+          {
+            "control_type": "text",
+            "label": "Employee email",
+            "name": "employee_email",
+            "type": "string",
+            "optional": false
+          },
+          {
+            "control_type": "text",
+            "label": "Reservation ID",
+            "name": "reservation_id",
+            "type": "string",
+            "optional": false
+          },
+          {
+            "control_type": "text",
+            "label": "Priority",
+            "name": "priority",
+            "type": "string",
+            "optional": false
+          },
+          {
+            "control_type": "text",
+            "label": "Items",
+            "name": "items",
+            "type": "string",
+            "optional": false
+          }
+        ],
+        "type": "object"
+      }
+    ],
+    "block": [
+      {
+        "number": 1,
+        "provider": "jira",
+        "name": "create_issue",
+        "as": "63d6a57d",
+        "keyword": "action",
+        "dynamicPickListSelection": {
+          "project_issuetype": {
+            "ids": [
+              "IT Helpdesk : Task@@IHT",
+              "IHT--Task"
+            ],
+            "titles": [
+              "IT Helpdesk : Task",
+              "IT Helpdesk : Task : Task"
+            ]
+          },
+          "sample_project_issuetype": {
+            "ids": [
+              "IT Helpdesk : Task@@IHT",
+              "IHT--Task"
+            ],
+            "titles": [
+              "IT Helpdesk : Task",
+              "IT Helpdesk : Task : Task"
+            ]
+          }
+        },
+        "toggleCfg": {
+          "project_issuetype": true,
+          "sample_project_issuetype": true,
+          "priority": false
+        },
+        "input": {
+          "project_issuetype": "IHT--Task",
+          "sample_project_issuetype": "IHT--Task",
+          "summary": "Equipment Request - #{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"23a85e5f\",\"path\":[\"parameters\", \"employee_email\"]}')}",
+          "reporter": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"23a85e5f\",\"path\":[\"parameters\", \"employee_email\"]}')}",
+          "description": "Reservation ID : #{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"23a85e5f\",\"path\":[\"parameters\", \"reservation_id\"]}')}\nItems : #{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"23a85e5f\",\"path\":[\"parameters\", \"items\"]}')}",
+          "priority": "=_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"23a85e5f\",\"path\":[\"parameters\",\"priority\"]}') or \"Medium\""
+        },
+        "extended_input_schema": [
+          {
+            "control_type": "text",
+            "custom": false,
+            "extends_schema": false,
+            "hint": "Provide issue ID or key of parent issue, e.g. <b>10105</b> (issue ID) or <b>ABC-123</b> (issue key).Use issue ID if your issue moves between projects.",
+            "label": "Parent",
+            "name": "parent",
+            "optional": true,
+            "type": "string",
+            "customtype": "parent"
+          },
+          {
+            "control_type": "text",
+            "custom": true,
+            "extends_schema": false,
+            "hint": "",
+            "label": "Request Type",
+            "name": "customfield_10010",
+            "optional": true,
+            "type": "string",
+            "customtype": "vp-origin"
+          },
+          {
+            "control_type": "text",
+            "custom": true,
+            "extends_schema": false,
+            "hint": "Enter request participants separated by commas. If the values have comma in it, make sure to give it as array of string using formula mode. For example: <b>[\"A,B,C\", \"D,E,F\"]</b>",
+            "label": "Request participants",
+            "name": "customfield_10034",
+            "optional": true,
+            "type": "string",
+            "customtype": "sd-request-participants"
+          },
+          {
+            "control_type": "text",
+            "custom": true,
+            "extends_schema": false,
+            "hint": "",
+            "label": "Satisfaction",
+            "name": "customfield_10035",
+            "optional": true,
+            "type": "string",
+            "customtype": "sd-request-feedback"
+          },
+          {
+            "control_type": "text",
+            "custom": true,
+            "extends_schema": false,
+            "hint": "",
+            "label": "Request language",
+            "name": "customfield_10040",
+            "optional": true,
+            "type": "string",
+            "customtype": "sd-request-language"
+          },
+          {
+            "control_type": "text",
+            "custom": true,
+            "extends_schema": false,
+            "hint": "",
+            "label": "Urgency",
+            "name": "customfield_10041",
+            "optional": true,
+            "type": "string",
+            "customtype": "select"
+          },
+          {
+            "control_type": "text",
+            "custom": true,
+            "extends_schema": false,
+            "hint": "Enter affected services separated by commas. If the values have comma in it, make sure to give it as array of string using formula mode. For example: <b>[\"A,B,C\", \"D,E,F\"]</b>",
+            "label": "Affected services",
+            "name": "customfield_10042",
+            "optional": true,
+            "type": "string",
+            "customtype": "service-entity-field-cftype"
+          },
+          {
+            "control_type": "text",
+            "custom": true,
+            "extends_schema": false,
+            "hint": "",
+            "label": "Pending reason",
+            "name": "customfield_10043",
+            "optional": true,
+            "type": "string",
+            "customtype": "select"
+          },
+          {
+            "control_type": "text",
+            "custom": true,
+            "extends_schema": false,
+            "hint": "Enter approver groups separated by commas. If the values have comma in it, make sure to give it as array of string using formula mode. For example: <b>[\"A,B,C\", \"D,E,F\"]</b>",
+            "label": "Approver groups",
+            "name": "customfield_10044",
+            "optional": true,
+            "type": "string",
+            "customtype": "multigrouppicker"
+          },
+          {
+            "control_type": "text",
+            "custom": true,
+            "extends_schema": false,
+            "hint": "",
+            "label": "Team",
+            "name": "customfield_10001",
+            "optional": true,
+            "type": "string",
+            "customtype": "atlassian-team"
+          },
+          {
+            "control_type": "text",
+            "custom": true,
+            "extends_schema": false,
+            "hint": "Enter organizations separated by commas. If the values have comma in it, make sure to give it as array of string using formula mode. For example: <b>[\"A,B,C\", \"D,E,F\"]</b>",
+            "label": "Organizations",
+            "name": "customfield_10002",
+            "optional": true,
+            "type": "string",
+            "customtype": "sd-customer-organizations"
+          },
+          {
+            "control_type": "text",
+            "custom": true,
+            "extends_schema": false,
+            "hint": "Enter approvers separated by commas. If the values have comma in it, make sure to give it as array of string using formula mode. For example: <b>[\"A,B,C\", \"D,E,F\"]</b>",
+            "label": "Approvers",
+            "name": "customfield_10003",
+            "optional": true,
+            "type": "string",
+            "customtype": "multiuserpicker"
+          },
+          {
+            "control_type": "text",
+            "custom": true,
+            "extends_schema": false,
+            "hint": "",
+            "label": "Impact",
+            "name": "customfield_10004",
+            "optional": true,
+            "type": "string",
+            "customtype": "select"
+          }
+        ],
+        "comment": "Creates a new Jira issue based on the input data, including details like employee email, reservation ID, requested items, and priority.",
+        "uuid": "2015920a-f949-4d6c-bb8f-cfe1c6daca18",
+        "skip": false
+      },
+      {
+        "number": 2,
+        "provider": "google_sheets",
+        "name": "search_spreadsheet_rows_v4_new",
+        "as": "bf6536ec",
+        "keyword": "action",
+        "dynamicPickListSelection": {
+          "spreadsheet": "ACME_IT_Equipment"
+        },
+        "input": {
+          "team_drives": "my_drive",
+          "spreadsheet": "1QmpgNTcjzTY8K3TbvmbXt8h9NgRiRGO1Dy0l_tjq7VI",
+          "count": "200",
+          "sheet": "Reservations",
+          "data": {
+            "col_Reservation ID": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"23a85e5f\",\"path\":[\"parameters\", \"reservation_id\"]}')}"
+          }
+        },
+        "extended_output_schema": [
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Spreadsheet ID",
+            "name": "spreadsheet_id",
+            "type": "string"
+          },
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Spreadsheet name",
+            "name": "spreadsheet_name",
+            "type": "string"
+          },
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Sheet name",
+            "name": "sheet",
+            "type": "string"
+          },
+          {
+            "extends_schema": false,
+            "label": "Rows",
+            "name": "rows",
+            "of": "object",
+            "properties": [
+              {
+                "control_type": "number",
+                "label": "Row number",
+                "type": "integer",
+                "name": "row_number",
+                "extends_schema": false,
+                "parse_output": "integer_conversion"
+              },
+              {
+                "control_type": "text",
+                "label": "Reservation ID",
+                "type": "string",
+                "name": "col_Reservation ID",
+                "extends_schema": false,
+                "old_name": "col_Reservation_ID",
+                "custom_attribute": 1
+              },
+              {
+                "control_type": "text",
+                "label": "Timestamp",
+                "type": "string",
+                "name": "col_Timestamp",
+                "extends_schema": false,
+                "old_name": "col_Timestamp",
+                "custom_attribute": 2
+              },
+              {
+                "control_type": "text",
+                "label": "Employee ID",
+                "type": "string",
+                "name": "col_Employee ID",
+                "extends_schema": false,
+                "old_name": "col_Employee_ID",
+                "custom_attribute": 3
+              },
+              {
+                "control_type": "text",
+                "label": "Employee Name",
+                "type": "string",
+                "name": "col_Employee Name",
+                "extends_schema": false,
+                "old_name": "col_Employee_Name",
+                "custom_attribute": 4
+              },
+              {
+                "control_type": "text",
+                "label": "Employee Email",
+                "type": "string",
+                "name": "col_Employee Email",
+                "extends_schema": false,
+                "old_name": "col_Employee_Email",
+                "custom_attribute": 5
+              },
+              {
+                "control_type": "text",
+                "label": "Item ID",
+                "type": "string",
+                "name": "col_Item ID",
+                "extends_schema": false,
+                "old_name": "col_Item_ID",
+                "custom_attribute": 6
+              },
+              {
+                "control_type": "text",
+                "label": "Item Name",
+                "type": "string",
+                "name": "col_Item Name",
+                "extends_schema": false,
+                "old_name": "col_Item_Name",
+                "custom_attribute": 7
+              },
+              {
+                "control_type": "text",
+                "label": "Qty Reserved",
+                "type": "string",
+                "name": "col_Qty Reserved",
+                "extends_schema": false,
+                "old_name": "col_Qty_Reserved",
+                "custom_attribute": 8
+              },
+              {
+                "control_type": "text",
+                "label": "Jira Ticket",
+                "type": "string",
+                "name": "col_Jira Ticket",
+                "extends_schema": false,
+                "old_name": "col_Jira_Ticket",
+                "custom_attribute": 9
+              },
+              {
+                "control_type": "text",
+                "label": "Status",
+                "type": "string",
+                "name": "col_Status",
+                "extends_schema": false,
+                "old_name": "col_Status",
+                "custom_attribute": 10
+              },
+              {
+                "control_type": "text",
+                "label": "Notes",
+                "type": "string",
+                "name": "col_Notes",
+                "extends_schema": false,
+                "old_name": "col_Notes",
+                "custom_attribute": 11
+              }
+            ],
+            "type": "array"
+          }
+        ],
+        "extended_input_schema": [
+          {
+            "control_type": "select",
+            "extends_schema": true,
+            "hint": "Select a sheet to search for rows. The sheet must have at least one header row. <a href='https://docs.workato.com/connectors/google-sheets/action-add-row.html#setting-up-the-google-sheet' target='_blank'>Learn more</a>",
+            "label": "Sheet",
+            "name": "sheet",
+            "optional": false,
+            "pick_list": [
+              [
+                "Stock",
+                "Stock"
+              ],
+              [
+                "Entitlements",
+                "Entitlements"
+              ],
+              [
+                "Reservations",
+                "Reservations"
+              ],
+              [
+                "Salesforce Contact Setup",
+                "Salesforce Contact Setup"
+              ],
+              [
+                "Setup Checklist",
+                "Setup Checklist"
+              ]
+            ],
+            "toggle_field": {
+              "control_type": "text",
+              "label": "Sheet name",
+              "toggle_hint": "Use sheet name",
+              "extends_schema": true,
+              "change_on_blur": true,
+              "toggle_to_secondary_hint": "Use sheet name",
+              "toggle_to_primary_hint": "Select a sheet",
+              "hint": "Use <b>Sheet name</b> pill from the output of other Google Sheets’ triggers/actions. Or enter sheet name manually. The sheet must have at least 1 header row in input field.",
+              "type": "string",
+              "name": "sheet_name"
+            },
+            "toggle_hint": "Select a sheet",
+            "type": "string"
+          },
+          {
+            "extends_schema": false,
+            "hint": "Enter one or more search values. Workato will search for rows matching <b>ALL</b> of the search values below.",
+            "label": "Columns",
+            "name": "data",
+            "properties": [
+              {
+                "control_type": "text",
+                "label": "Reservation ID",
+                "type": "string",
+                "name": "col_Reservation ID",
+                "optional": true,
+                "sticky": true,
+                "extends_schema": false,
+                "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+              },
+              {
+                "control_type": "text",
+                "label": "Timestamp",
+                "type": "string",
+                "name": "col_Timestamp",
+                "optional": true,
+                "sticky": true,
+                "extends_schema": false,
+                "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+              },
+              {
+                "control_type": "text",
+                "label": "Employee ID",
+                "type": "string",
+                "name": "col_Employee ID",
+                "optional": true,
+                "sticky": true,
+                "extends_schema": false,
+                "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+              },
+              {
+                "control_type": "text",
+                "label": "Employee Name",
+                "type": "string",
+                "name": "col_Employee Name",
+                "optional": true,
+                "sticky": true,
+                "extends_schema": false,
+                "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+              },
+              {
+                "control_type": "text",
+                "label": "Employee Email",
+                "type": "string",
+                "name": "col_Employee Email",
+                "optional": true,
+                "sticky": true,
+                "extends_schema": false,
+                "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+              },
+              {
+                "control_type": "text",
+                "label": "Item ID",
+                "type": "string",
+                "name": "col_Item ID",
+                "optional": true,
+                "sticky": true,
+                "extends_schema": false,
+                "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+              },
+              {
+                "control_type": "text",
+                "label": "Item Name",
+                "type": "string",
+                "name": "col_Item Name",
+                "optional": true,
+                "sticky": true,
+                "extends_schema": false,
+                "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+              },
+              {
+                "control_type": "text",
+                "label": "Qty Reserved",
+                "type": "string",
+                "name": "col_Qty Reserved",
+                "optional": true,
+                "sticky": true,
+                "extends_schema": false,
+                "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+              },
+              {
+                "control_type": "text",
+                "label": "Jira Ticket",
+                "type": "string",
+                "name": "col_Jira Ticket",
+                "optional": true,
+                "sticky": true,
+                "extends_schema": false,
+                "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+              },
+              {
+                "control_type": "text",
+                "label": "Status",
+                "type": "string",
+                "name": "col_Status",
+                "optional": true,
+                "sticky": true,
+                "extends_schema": false,
+                "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+              },
+              {
+                "control_type": "text",
+                "label": "Notes",
+                "type": "string",
+                "name": "col_Notes",
+                "optional": true,
+                "sticky": true,
+                "extends_schema": false,
+                "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+              }
+            ],
+            "sticky": true,
+            "type": "object"
+          },
+          {
+            "control_type": "number",
+            "default": 200,
+            "extends_schema": false,
+            "hint": "Maximum number of matched rows to be returned. Minimum accepted value is <b>1</b> and maximum accepted value is <b>50000</b>.",
+            "label": "Search result size",
+            "name": "count",
+            "optional": true,
+            "parse_output": "float_conversion",
+            "type": "number"
+          }
+        ],
+        "comment": "Searches for rows in a specified Google Sheet to find reservations that match the given reservation ID.",
+        "uuid": "b1c68dff-d42d-48d7-962b-5f6a1a4bbe21",
+        "skip": false
+      },
+      {
+        "number": 3,
+        "as": "69a1df10",
+        "keyword": "foreach",
+        "repeat_mode": "simple",
+        "clear_scope": false,
+        "input": {
+          "source": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"google_sheets\",\"line\":\"bf6536ec\",\"path\":[\"rows\"]}')}"
+        },
+        "extended_output_schema": [
+          {
+            "control_type": "number",
+            "extends_schema": false,
+            "label": "Row number",
+            "name": "row_number",
+            "parse_output": "integer_conversion",
+            "type": "integer"
+          },
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Reservation ID",
+            "name": "col_Reservation ID",
+            "old_name": "col_Reservation_ID",
+            "type": "string",
+            "custom_attribute": 1
+          },
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Timestamp",
+            "name": "col_Timestamp",
+            "old_name": "col_Timestamp",
+            "type": "string",
+            "custom_attribute": 2
+          },
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Employee ID",
+            "name": "col_Employee ID",
+            "old_name": "col_Employee_ID",
+            "type": "string",
+            "custom_attribute": 3
+          },
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Employee Name",
+            "name": "col_Employee Name",
+            "old_name": "col_Employee_Name",
+            "type": "string",
+            "custom_attribute": 4
+          },
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Employee Email",
+            "name": "col_Employee Email",
+            "old_name": "col_Employee_Email",
+            "type": "string",
+            "custom_attribute": 5
+          },
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Item ID",
+            "name": "col_Item ID",
+            "old_name": "col_Item_ID",
+            "type": "string",
+            "custom_attribute": 6
+          },
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Item Name",
+            "name": "col_Item Name",
+            "old_name": "col_Item_Name",
+            "type": "string",
+            "custom_attribute": 7
+          },
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Qty Reserved",
+            "name": "col_Qty Reserved",
+            "old_name": "col_Qty_Reserved",
+            "type": "string",
+            "custom_attribute": 8
+          },
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Jira Ticket",
+            "name": "col_Jira Ticket",
+            "old_name": "col_Jira_Ticket",
+            "type": "string",
+            "custom_attribute": 9
+          },
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Status",
+            "name": "col_Status",
+            "old_name": "col_Status",
+            "type": "string",
+            "custom_attribute": 10
+          },
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Notes",
+            "name": "col_Notes",
+            "old_name": "col_Notes",
+            "type": "string",
+            "custom_attribute": 11
+          }
+        ],
+        "block": [
+          {
+            "number": 4,
+            "provider": "google_sheets",
+            "name": "update_row_v4_new",
+            "as": "7c5001cb",
+            "keyword": "action",
+            "dynamicPickListSelection": {
+              "spreadsheet": "ACME_IT_Equipment"
+            },
+            "input": {
+              "team_drives": "my_drive",
+              "spreadsheet": "1QmpgNTcjzTY8K3TbvmbXt8h9NgRiRGO1Dy0l_tjq7VI",
+              "sheet": "Reservations",
+              "row_number": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"foreach\",\"line\":\"69a1df10\",\"path\":[\"row_number\"]}')}",
+              "data": {
+                "col_Jira Ticket": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"jira\",\"line\":\"63d6a57d\",\"path\":[\"key\"]}')}"
+              }
+            },
+            "extended_output_schema": [
+              {
+                "extends_schema": false,
+                "label": "Columns",
+                "name": "columns",
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Reservation ID",
+                    "type": "string",
+                    "name": "col_Reservation ID",
+                    "extends_schema": false,
+                    "old_name": "col_Reservation_ID",
+                    "custom_attribute": 1
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Timestamp",
+                    "type": "string",
+                    "name": "col_Timestamp",
+                    "extends_schema": false,
+                    "old_name": "col_Timestamp",
+                    "custom_attribute": 2
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Employee ID",
+                    "type": "string",
+                    "name": "col_Employee ID",
+                    "extends_schema": false,
+                    "old_name": "col_Employee_ID",
+                    "custom_attribute": 3
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Employee Name",
+                    "type": "string",
+                    "name": "col_Employee Name",
+                    "extends_schema": false,
+                    "old_name": "col_Employee_Name",
+                    "custom_attribute": 4
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Employee Email",
+                    "type": "string",
+                    "name": "col_Employee Email",
+                    "extends_schema": false,
+                    "old_name": "col_Employee_Email",
+                    "custom_attribute": 5
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Item ID",
+                    "type": "string",
+                    "name": "col_Item ID",
+                    "extends_schema": false,
+                    "old_name": "col_Item_ID",
+                    "custom_attribute": 6
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Item Name",
+                    "type": "string",
+                    "name": "col_Item Name",
+                    "extends_schema": false,
+                    "old_name": "col_Item_Name",
+                    "custom_attribute": 7
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Qty Reserved",
+                    "type": "string",
+                    "name": "col_Qty Reserved",
+                    "extends_schema": false,
+                    "old_name": "col_Qty_Reserved",
+                    "custom_attribute": 8
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Jira Ticket",
+                    "type": "string",
+                    "name": "col_Jira Ticket",
+                    "extends_schema": false,
+                    "old_name": "col_Jira_Ticket",
+                    "custom_attribute": 9
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Status",
+                    "type": "string",
+                    "name": "col_Status",
+                    "extends_schema": false,
+                    "old_name": "col_Status",
+                    "custom_attribute": 10
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Notes",
+                    "type": "string",
+                    "name": "col_Notes",
+                    "extends_schema": false,
+                    "old_name": "col_Notes",
+                    "custom_attribute": 11
+                  }
+                ],
+                "type": "object"
+              }
+            ],
+            "extended_input_schema": [
+              {
+                "control_type": "select",
+                "extends_schema": true,
+                "hint": "Select a sheet to update row. The sheet must have at least one header row. <a href='https://docs.workato.com/connectors/google-sheets/action-add-row.html#setting-up-the-google-sheet' target='_blank'>Learn more</a>",
+                "label": "Sheet",
+                "name": "sheet",
+                "optional": false,
+                "pick_list": [
+                  [
+                    "Stock",
+                    "Stock"
+                  ],
+                  [
+                    "Entitlements",
+                    "Entitlements"
+                  ],
+                  [
+                    "Reservations",
+                    "Reservations"
+                  ],
+                  [
+                    "Salesforce Contact Setup",
+                    "Salesforce Contact Setup"
+                  ],
+                  [
+                    "Setup Checklist",
+                    "Setup Checklist"
+                  ]
+                ],
+                "toggle_field": {
+                  "control_type": "text",
+                  "label": "Sheet name",
+                  "toggle_hint": "Use sheet name",
+                  "extends_schema": true,
+                  "change_on_blur": true,
+                  "toggle_to_secondary_hint": "Use sheet name",
+                  "toggle_to_primary_hint": "Select a sheet",
+                  "hint": "Use <b>Sheet name</b> pill from the output of other Google Sheets’ triggers/actions. Or enter sheet name manually. The sheet must have at least 1 header row in input field.",
+                  "type": "string",
+                  "name": "sheet_name"
+                },
+                "toggle_hint": "Select a sheet",
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "extends_schema": false,
+                "hint": "Enter the row number of the row you want to update. Or use <b>Row number</b> data pill from the output of other Google Sheets’s triggers & actions.",
+                "label": "Row number",
+                "name": "row_number",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "extends_schema": false,
+                "hint": "Input new values to update the row.",
+                "label": "Columns",
+                "name": "data",
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Reservation ID",
+                    "type": "string",
+                    "name": "col_Reservation ID",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Timestamp",
+                    "type": "string",
+                    "name": "col_Timestamp",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Employee ID",
+                    "type": "string",
+                    "name": "col_Employee ID",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Employee Name",
+                    "type": "string",
+                    "name": "col_Employee Name",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Employee Email",
+                    "type": "string",
+                    "name": "col_Employee Email",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Item ID",
+                    "type": "string",
+                    "name": "col_Item ID",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Item Name",
+                    "type": "string",
+                    "name": "col_Item Name",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Qty Reserved",
+                    "type": "string",
+                    "name": "col_Qty Reserved",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Jira Ticket",
+                    "type": "string",
+                    "name": "col_Jira Ticket",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Status",
+                    "type": "string",
+                    "name": "col_Status",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Notes",
+                    "type": "string",
+                    "name": "col_Notes",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  }
+                ],
+                "sticky": true,
+                "type": "object"
+              }
+            ],
+            "comment": "Updates the matching row in the Google Sheet with the Jira ticket key created earlier for tracking purposes.",
+            "uuid": "4f1bacba-0233-4068-9191-38b2ea5781d5",
+            "skip": false
+          }
+        ],
+        "source": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"google_sheets\",\"line\":\"bf6536ec\",\"path\":[\"rows\"]}')}",
+        "comment": "Iterates through each row retrieved in the previous step to process each reservation matching the criteria.",
+        "uuid": "db006e93-be10-4f22-8768-88997c8ec438",
+        "skip": false
+      },
+      {
+        "number": 5,
+        "provider": "workato_recipe_function",
+        "name": "return_result",
+        "as": "3ac75d82",
+        "keyword": "action",
+        "input": {
+        },
+        "comment": "Returns the created Jira ticket details including the ticket key, its URL, status, and the related reservation ID to the initiating Workato recipe function.",
+        "uuid": "bb1cdc59-260d-4671-9671-02fc42a93177",
+        "skip": false
+      }
+    ],
+    "comment": "This is the trigger step which initiates the recipe when new data is passed into the recipe function by Workato.",
+    "uuid": "6044e127-c513-415c-a555-da676b3eef4b",
+    "skip": false
+  },
+  "config": [
+    {
+      "keyword": "application",
+      "provider": "workato_recipe_function",
+      "skip_validation": false,
+      "account_id": null
+    },
+    {
+      "keyword": "application",
+      "provider": "jira",
+      "skip_validation": false,
+      "account_id": {
+        "zip_name": "my_fifth_jira_account.connection.json",
+        "name": "My fifth Jira account",
+        "folder": ""
+      }
+    },
+    {
+      "keyword": "application",
+      "provider": "google_sheets",
+      "skip_validation": false,
+      "account_id": {
+        "zip_name": "my_second_google_sheets_account.connection.json",
+        "name": "My second Google Sheets account",
+        "folder": ""
+      }
+    }
+  ]
+}

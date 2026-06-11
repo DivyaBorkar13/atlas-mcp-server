@@ -1,0 +1,153 @@
+{
+  "name": "SAR [REC] | send_approval_request",
+  "description": "",
+  "version": 2,
+  "private": false,
+  "concurrency": 1,
+  "code": {
+    "number": 0,
+    "provider": "workato_recipe_function",
+    "name": "execute",
+    "as": "411f9d6a",
+    "keyword": "trigger",
+    "input": {
+      "parameters_schema_json": "[{\"name\":\"manager_email\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Manager email\"},{\"name\":\"employee_name\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Employee name\"},{\"name\":\"items\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Items\"},{\"name\":\"ticket_url\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Ticket URL\"},{\"name\":\"reservation_id\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Reservation ID\"}]",
+      "result_schema_json": "[{\"name\":\"status\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Status\"},{\"name\":\"sent_to\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Sent to\"}]"
+    },
+    "extended_output_schema": [
+      {
+        "label": "Parameters",
+        "name": "parameters",
+        "properties": [
+          {
+            "control_type": "text",
+            "label": "Manager email",
+            "name": "manager_email",
+            "type": "string",
+            "optional": false
+          },
+          {
+            "control_type": "text",
+            "label": "Employee name",
+            "name": "employee_name",
+            "type": "string",
+            "optional": false
+          },
+          {
+            "control_type": "text",
+            "label": "Items",
+            "name": "items",
+            "type": "string",
+            "optional": false
+          },
+          {
+            "control_type": "text",
+            "label": "Ticket URL",
+            "name": "ticket_url",
+            "type": "string",
+            "optional": false
+          },
+          {
+            "control_type": "text",
+            "label": "Reservation ID",
+            "name": "reservation_id",
+            "type": "string",
+            "optional": false
+          }
+        ],
+        "type": "object"
+      }
+    ],
+    "block": [
+      {
+        "number": 1,
+        "provider": "email",
+        "name": "send_mail",
+        "as": "1572fa90",
+        "keyword": "action",
+        "input": {
+          "email_type": "plain_text",
+          "to": "divya.borkar@dynpro.com",
+          "subject": "Approval Needed - Equipment Request for #{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"411f9d6a\",\"path\":[\"parameters\",\"employee_name\"]}')}",
+          "body": "Hi,\n\nA new IT equipment has been submitted and requires your approval.\n\nEmployee : #{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"411f9d6a\",\"path\":[\"parameters\",\"employee_name\"]}')}\nItems : #{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"411f9d6a\",\"path\":[\"parameters\",\"items\"]}')}\nTicket : #{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"411f9d6a\",\"path\":[\"parameters\",\"ticket_url\"]}')}\nReservation : #{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"411f9d6a\",\"path\":[\"parameters\",\"reservation_id\"]}')}\n\nPlease review the Jira Ticket and approve or deny the request.\n\nThanks,\nATLAS - IT Provisioning"
+        },
+        "uuid": "89814458-e5e9-436b-b8f9-ddae964ae0ca"
+      },
+      {
+        "number": 2,
+        "provider": "workato_recipe_function",
+        "name": "return_result",
+        "as": "4d62e883",
+        "keyword": "action",
+        "input": {
+          "result": {
+            "status": "Approval request email sent",
+            "sent_to": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"411f9d6a\",\"path\":[\"parameters\",\"manager_email\"]}')}"
+          }
+        },
+        "extended_output_schema": [
+          {
+            "label": "Result",
+            "name": "result",
+            "properties": [
+              {
+                "control_type": "text",
+                "label": "Status",
+                "name": "status",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "control_type": "text",
+                "label": "Sent to",
+                "name": "sent_to",
+                "type": "string",
+                "optional": false
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "extended_input_schema": [
+          {
+            "label": "Result",
+            "name": "result",
+            "properties": [
+              {
+                "control_type": "text",
+                "label": "Status",
+                "name": "status",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "control_type": "text",
+                "label": "Sent to",
+                "name": "sent_to",
+                "type": "string",
+                "optional": false
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "uuid": "8f921451-98cf-44f2-8016-18277d207a81"
+      }
+    ],
+    "uuid": "caf79efe-b5c5-460e-929a-6aafd22c9ce1"
+  },
+  "config": [
+    {
+      "keyword": "application",
+      "provider": "workato_recipe_function",
+      "skip_validation": false,
+      "account_id": null
+    },
+    {
+      "keyword": "application",
+      "provider": "email",
+      "skip_validation": false,
+      "account_id": null
+    }
+  ]
+}

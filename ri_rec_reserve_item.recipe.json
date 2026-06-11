@@ -1,0 +1,974 @@
+{
+  "name": "RI [REC] | reserve_item",
+  "description": "",
+  "version": 3,
+  "private": false,
+  "concurrency": 1,
+  "code": {
+    "number": 0,
+    "provider": "workato_recipe_function",
+    "name": "execute",
+    "as": "9947224d",
+    "keyword": "trigger",
+    "input": {
+      "parameters_schema_json": "[{\"name\":\"employee_email\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Employee email\"},{\"name\":\"employee_id\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Employee ID\"},{\"name\":\"employee_full_name\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Employee full name\"},{\"name\":\"items\",\"type\":\"array\",\"optional\":false,\"properties\":[{\"name\":\"item_id\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Item ID\"},{\"name\":\"quantity\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Quantity\"}],\"label\":\"Items\",\"of\":\"object\"}]",
+      "result_schema_json": "[{\"name\":\"reservation_id\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Reservation ID\"},{\"name\":\"status\",\"type\":\"string\",\"optional\":false,\"control_type\":\"text\",\"label\":\"Status\"}]"
+    },
+    "extended_output_schema": [
+      {
+        "label": "Parameters",
+        "name": "parameters",
+        "properties": [
+          {
+            "control_type": "text",
+            "label": "Employee email",
+            "name": "employee_email",
+            "type": "string",
+            "optional": false
+          },
+          {
+            "control_type": "text",
+            "label": "Employee ID",
+            "name": "employee_id",
+            "type": "string",
+            "optional": false
+          },
+          {
+            "control_type": "text",
+            "label": "Employee full name",
+            "name": "employee_full_name",
+            "type": "string",
+            "optional": false
+          },
+          {
+            "label": "Items",
+            "name": "items",
+            "type": "array",
+            "optional": false,
+            "of": "object",
+            "properties": [
+              {
+                "control_type": "text",
+                "label": "Item ID",
+                "name": "item_id",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "control_type": "text",
+                "label": "Quantity",
+                "name": "quantity",
+                "type": "string",
+                "optional": false
+              }
+            ]
+          }
+        ],
+        "type": "object"
+      }
+    ],
+    "block": [
+      {
+        "number": 1,
+        "provider": "workato_variable",
+        "name": "declare_variable",
+        "as": "d2f401a7",
+        "keyword": "action",
+        "input": {
+          "variables": {
+            "schema": "[{\"name\":\"reservation_id\",\"type\":\"string\",\"optional\":true,\"label\":\"reservation_id\",\"details\":{\"real_name\":\"reservation_id\"},\"control_type\":\"text\",\"parent\":[\"variables\",\"data\"]}]",
+            "data": {
+              "reservation_id": "=\"RES-\"+now.to_i"
+            }
+          }
+        },
+        "extended_output_schema": [
+          {
+            "control_type": "text",
+            "label": "reservation_id",
+            "name": "reservation_id",
+            "optional": true,
+            "type": "string",
+            "details": {
+              "real_name": "reservation_id"
+            }
+          }
+        ],
+        "extended_input_schema": [
+          {
+            "add_field_label": "Add a variable",
+            "control_type": "form-schema-builder",
+            "empty_schema_title": "Add variables by giving them a name, type and default value",
+            "exclude_fields": [
+              "hint"
+            ],
+            "item_label": "variable",
+            "label": "Variables",
+            "mark_as_required": true,
+            "name": "variables",
+            "ngIf": "!input.name",
+            "optional": true,
+            "properties": [
+              {
+                "control_type": "text",
+                "label": "Schema",
+                "extends_schema": true,
+                "broadcast_change_event": true,
+                "type": "string",
+                "name": "schema"
+              },
+              {
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "reservation_id",
+                    "name": "reservation_id",
+                    "type": "string",
+                    "optional": true,
+                    "details": {
+                      "real_name": "reservation_id"
+                    },
+                    "parent": [
+                      "variables",
+                      "data"
+                    ],
+                    "hint": "Defaults to nil if not supplied.",
+                    "sticky": true
+                  }
+                ],
+                "label": "Data",
+                "type": "object",
+                "name": "data"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "comment": "Create a variable to store the reservation ID, appending the current timestamp. However, note that the Ruby formula provided is invalid.",
+        "uuid": "8a3cbf08-ba01-4222-ba3a-4435748a89b8",
+        "skip": false
+      },
+      {
+        "number": 2,
+        "as": "68d16059",
+        "keyword": "foreach",
+        "repeat_mode": "simple",
+        "clear_scope": false,
+        "input": {
+          "source": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"9947224d\",\"path\":[\"parameters\", \"items\"]}')}"
+        },
+        "extended_output_schema": [
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Item ID",
+            "name": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "control_type": "text",
+            "extends_schema": false,
+            "label": "Quantity",
+            "name": "quantity",
+            "optional": false,
+            "type": "string"
+          }
+        ],
+        "block": [
+          {
+            "number": 3,
+            "provider": "google_sheets",
+            "name": "search_spreadsheet_rows_v4_new",
+            "as": "81ec58fb",
+            "keyword": "action",
+            "dynamicPickListSelection": {
+              "spreadsheet": "ACME_IT_Equipment"
+            },
+            "input": {
+              "team_drives": "my_drive",
+              "spreadsheet": "1QmpgNTcjzTY8K3TbvmbXt8h9NgRiRGO1Dy0l_tjq7VI",
+              "count": "200",
+              "sheet": "Stock",
+              "data": {
+                "col_Item ID": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"foreach\",\"line\":\"68d16059\",\"path\":[\"item_id\"]}')}",
+                "col_Status": "In Stock"
+              }
+            },
+            "extended_output_schema": [
+              {
+                "control_type": "text",
+                "extends_schema": false,
+                "label": "Spreadsheet ID",
+                "name": "spreadsheet_id",
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "extends_schema": false,
+                "label": "Spreadsheet name",
+                "name": "spreadsheet_name",
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "extends_schema": false,
+                "label": "Sheet name",
+                "name": "sheet",
+                "type": "string"
+              },
+              {
+                "extends_schema": false,
+                "label": "Rows",
+                "name": "rows",
+                "of": "object",
+                "properties": [
+                  {
+                    "control_type": "number",
+                    "label": "Row number",
+                    "type": "integer",
+                    "name": "row_number",
+                    "extends_schema": false,
+                    "parse_output": "integer_conversion"
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Item ID",
+                    "type": "string",
+                    "name": "col_Item ID",
+                    "extends_schema": false,
+                    "old_name": "col_Item_ID",
+                    "custom_attribute": 1
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Item Name",
+                    "type": "string",
+                    "name": "col_Item Name",
+                    "extends_schema": false,
+                    "old_name": "col_Item_Name",
+                    "custom_attribute": 2
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Category",
+                    "type": "string",
+                    "name": "col_Category",
+                    "extends_schema": false,
+                    "old_name": "col_Category",
+                    "custom_attribute": 3
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Available Qty",
+                    "type": "string",
+                    "name": "col_Available Qty",
+                    "extends_schema": false,
+                    "old_name": "col_Available_Qty",
+                    "custom_attribute": 4
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Reserved Qty",
+                    "type": "string",
+                    "name": "col_Reserved Qty",
+                    "extends_schema": false,
+                    "old_name": "col_Reserved_Qty",
+                    "custom_attribute": 5
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Total Qty",
+                    "type": "string",
+                    "name": "col_Total Qty",
+                    "extends_schema": false,
+                    "old_name": "col_Total_Qty",
+                    "custom_attribute": 6
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Unit Cost (USD)",
+                    "type": "string",
+                    "name": "col_Unit Cost (USD)",
+                    "extends_schema": false,
+                    "old_name": "col_Unit_Cost__USD_",
+                    "custom_attribute": 7
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Reorder Level",
+                    "type": "string",
+                    "name": "col_Reorder Level",
+                    "extends_schema": false,
+                    "old_name": "col_Reorder_Level",
+                    "custom_attribute": 8
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Status",
+                    "type": "string",
+                    "name": "col_Status",
+                    "extends_schema": false,
+                    "old_name": "col_Status",
+                    "custom_attribute": 9
+                  }
+                ],
+                "type": "array"
+              }
+            ],
+            "extended_input_schema": [
+              {
+                "control_type": "select",
+                "extends_schema": true,
+                "hint": "Select a sheet to search for rows. The sheet must have at least one header row. <a href='https://docs.workato.com/connectors/google-sheets/action-add-row.html#setting-up-the-google-sheet' target='_blank'>Learn more</a>",
+                "label": "Sheet",
+                "name": "sheet",
+                "optional": false,
+                "pick_list": [
+                  [
+                    "Stock",
+                    "Stock"
+                  ],
+                  [
+                    "Entitlements",
+                    "Entitlements"
+                  ],
+                  [
+                    "Reservations",
+                    "Reservations"
+                  ],
+                  [
+                    "Salesforce Contact Setup",
+                    "Salesforce Contact Setup"
+                  ],
+                  [
+                    "Setup Checklist",
+                    "Setup Checklist"
+                  ]
+                ],
+                "toggle_field": {
+                  "control_type": "text",
+                  "label": "Sheet name",
+                  "toggle_hint": "Use sheet name",
+                  "extends_schema": true,
+                  "change_on_blur": true,
+                  "toggle_to_secondary_hint": "Use sheet name",
+                  "toggle_to_primary_hint": "Select a sheet",
+                  "hint": "Use <b>Sheet name</b> pill from the output of other Google Sheets’ triggers/actions. Or enter sheet name manually. The sheet must have at least 1 header row in input field.",
+                  "type": "string",
+                  "name": "sheet_name"
+                },
+                "toggle_hint": "Select a sheet",
+                "type": "string"
+              },
+              {
+                "extends_schema": false,
+                "hint": "Enter one or more search values. Workato will search for rows matching <b>ALL</b> of the search values below.",
+                "label": "Columns",
+                "name": "data",
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Item ID",
+                    "type": "string",
+                    "name": "col_Item ID",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false,
+                    "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Item Name",
+                    "type": "string",
+                    "name": "col_Item Name",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false,
+                    "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Category",
+                    "type": "string",
+                    "name": "col_Category",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false,
+                    "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Available Qty",
+                    "type": "string",
+                    "name": "col_Available Qty",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false,
+                    "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Reserved Qty",
+                    "type": "string",
+                    "name": "col_Reserved Qty",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false,
+                    "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Total Qty",
+                    "type": "string",
+                    "name": "col_Total Qty",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false,
+                    "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Unit Cost (USD)",
+                    "type": "string",
+                    "name": "col_Unit Cost (USD)",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false,
+                    "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Reorder Level",
+                    "type": "string",
+                    "name": "col_Reorder Level",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false,
+                    "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Status",
+                    "type": "string",
+                    "name": "col_Status",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false,
+                    "hint": "Search for an exact match of the search value you enter here. Search value is case-sensitive and can contain space."
+                  }
+                ],
+                "sticky": true,
+                "type": "object"
+              },
+              {
+                "control_type": "number",
+                "default": 200,
+                "extends_schema": false,
+                "hint": "Maximum number of matched rows to be returned. Minimum accepted value is <b>1</b> and maximum accepted value is <b>50000</b>.",
+                "label": "Search result size",
+                "name": "count",
+                "optional": true,
+                "parse_output": "float_conversion",
+                "type": "number"
+              }
+            ],
+            "comment": "Search the Google Sheets 'Stock' sheet for rows where 'Item ID' matches the current item's ID and 'Status' is 'In Stock'.",
+            "uuid": "5ac1b54a-47b0-43e6-859e-6bdee5c05174",
+            "skip": false
+          },
+          {
+            "number": 4,
+            "provider": "google_sheets",
+            "name": "update_row_v4_new",
+            "as": "bbaceb43",
+            "keyword": "action",
+            "dynamicPickListSelection": {
+              "spreadsheet": "ACME_IT_Equipment"
+            },
+            "input": {
+              "team_drives": "my_drive",
+              "spreadsheet": "1QmpgNTcjzTY8K3TbvmbXt8h9NgRiRGO1Dy0l_tjq7VI",
+              "sheet": "Stock",
+              "row_number": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"google_sheets\",\"line\":\"81ec58fb\",\"path\":[\"rows\", {\"path_element_type\": \"current_item\"}, \"row_number\"]}')}",
+              "data": {
+                "col_Available Qty": "=_dp('{\"pill_type\":\"output\",\"provider\":\"google_sheets\",\"line\":\"81ec58fb\",\"path\":[\"rows\",{\"path_element_type\":\"current_item\"},\"col_Available Qty\"]}').to_i-_dp('{\"pill_type\":\"output\",\"provider\":\"foreach\",\"line\":\"68d16059\",\"path\":[\"quantity\"]}').to_i",
+                "col_Reserved Qty": "=_dp('{\"pill_type\":\"output\",\"provider\":\"google_sheets\",\"line\":\"81ec58fb\",\"path\":[\"rows\",{\"path_element_type\":\"current_item\"},\"col_Reserved Qty\"]}').to_i+_dp('{\"pill_type\":\"output\",\"provider\":\"foreach\",\"line\":\"68d16059\",\"path\":[\"quantity\"]}').to_i"
+              }
+            },
+            "extended_output_schema": [
+              {
+                "extends_schema": false,
+                "label": "Columns",
+                "name": "columns",
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Item ID",
+                    "type": "string",
+                    "name": "col_Item ID",
+                    "extends_schema": false,
+                    "old_name": "col_Item_ID",
+                    "custom_attribute": 1
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Item Name",
+                    "type": "string",
+                    "name": "col_Item Name",
+                    "extends_schema": false,
+                    "old_name": "col_Item_Name",
+                    "custom_attribute": 2
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Category",
+                    "type": "string",
+                    "name": "col_Category",
+                    "extends_schema": false,
+                    "old_name": "col_Category",
+                    "custom_attribute": 3
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Available Qty",
+                    "type": "string",
+                    "name": "col_Available Qty",
+                    "extends_schema": false,
+                    "old_name": "col_Available_Qty",
+                    "custom_attribute": 4
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Reserved Qty",
+                    "type": "string",
+                    "name": "col_Reserved Qty",
+                    "extends_schema": false,
+                    "old_name": "col_Reserved_Qty",
+                    "custom_attribute": 5
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Total Qty",
+                    "type": "string",
+                    "name": "col_Total Qty",
+                    "extends_schema": false,
+                    "old_name": "col_Total_Qty",
+                    "custom_attribute": 6
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Unit Cost (USD)",
+                    "type": "string",
+                    "name": "col_Unit Cost (USD)",
+                    "extends_schema": false,
+                    "old_name": "col_Unit_Cost__USD_",
+                    "custom_attribute": 7
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Reorder Level",
+                    "type": "string",
+                    "name": "col_Reorder Level",
+                    "extends_schema": false,
+                    "old_name": "col_Reorder_Level",
+                    "custom_attribute": 8
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Status",
+                    "type": "string",
+                    "name": "col_Status",
+                    "extends_schema": false,
+                    "old_name": "col_Status",
+                    "custom_attribute": 9
+                  }
+                ],
+                "type": "object"
+              }
+            ],
+            "extended_input_schema": [
+              {
+                "control_type": "select",
+                "extends_schema": true,
+                "hint": "Select a sheet to update row. The sheet must have at least one header row. <a href='https://docs.workato.com/connectors/google-sheets/action-add-row.html#setting-up-the-google-sheet' target='_blank'>Learn more</a>",
+                "label": "Sheet",
+                "name": "sheet",
+                "optional": false,
+                "pick_list": [
+                  [
+                    "Stock",
+                    "Stock"
+                  ],
+                  [
+                    "Entitlements",
+                    "Entitlements"
+                  ],
+                  [
+                    "Reservations",
+                    "Reservations"
+                  ],
+                  [
+                    "Salesforce Contact Setup",
+                    "Salesforce Contact Setup"
+                  ],
+                  [
+                    "Setup Checklist",
+                    "Setup Checklist"
+                  ]
+                ],
+                "toggle_field": {
+                  "control_type": "text",
+                  "label": "Sheet name",
+                  "toggle_hint": "Use sheet name",
+                  "extends_schema": true,
+                  "change_on_blur": true,
+                  "toggle_to_secondary_hint": "Use sheet name",
+                  "toggle_to_primary_hint": "Select a sheet",
+                  "hint": "Use <b>Sheet name</b> pill from the output of other Google Sheets’ triggers/actions. Or enter sheet name manually. The sheet must have at least 1 header row in input field.",
+                  "type": "string",
+                  "name": "sheet_name"
+                },
+                "toggle_hint": "Select a sheet",
+                "type": "string"
+              },
+              {
+                "control_type": "text",
+                "extends_schema": false,
+                "hint": "Enter the row number of the row you want to update. Or use <b>Row number</b> data pill from the output of other Google Sheets’s triggers & actions.",
+                "label": "Row number",
+                "name": "row_number",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "extends_schema": false,
+                "hint": "Input new values to update the row.",
+                "label": "Columns",
+                "name": "data",
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Item ID",
+                    "type": "string",
+                    "name": "col_Item ID",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Item Name",
+                    "type": "string",
+                    "name": "col_Item Name",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Category",
+                    "type": "string",
+                    "name": "col_Category",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Available Qty",
+                    "type": "string",
+                    "name": "col_Available Qty",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Reserved Qty",
+                    "type": "string",
+                    "name": "col_Reserved Qty",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Total Qty",
+                    "type": "string",
+                    "name": "col_Total Qty",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Unit Cost (USD)",
+                    "type": "string",
+                    "name": "col_Unit Cost (USD)",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Reorder Level",
+                    "type": "string",
+                    "name": "col_Reorder Level",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Status",
+                    "type": "string",
+                    "name": "col_Status",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  }
+                ],
+                "sticky": true,
+                "type": "object"
+              }
+            ],
+            "comment": "Update the row in the 'Stock' sheet for the current item, adjusting 'Available Qty' and 'Reserved Qty'. Note that the Ruby formulas used for calculations are invalid.",
+            "uuid": "7ccf4ecf-81af-4c12-8e57-1e2a84e980ae",
+            "skip": false
+          },
+          {
+            "number": 5,
+            "provider": "google_sheets",
+            "name": "add_spreadsheet_row_v4",
+            "as": "c889582e",
+            "keyword": "action",
+            "dynamicPickListSelection": {
+              "spreadsheet": "ACME_IT_Equipment"
+            },
+            "toggleCfg": {
+              "is_top_left": true
+            },
+            "input": {
+              "team_drives": "my_drive",
+              "is_top_left": "false",
+              "spreadsheet": "1QmpgNTcjzTY8K3TbvmbXt8h9NgRiRGO1Dy0l_tjq7VI",
+              "sheet": "Reservations",
+              "data": {
+                "col_1": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_variable\",\"line\":\"d2f401a7\",\"path\":[\"reservation_id\"]}')}",
+                "col_2": "=now",
+                "col_3": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"9947224d\",\"path\":[\"parameters\", \"employee_id\"]}')}",
+                "col_4": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"9947224d\",\"path\":[\"parameters\", \"employee_full_name\"]}')}",
+                "col_5": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"9947224d\",\"path\":[\"parameters\", \"employee_email\"]}')}",
+                "col_6": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"google_sheets\",\"line\":\"bbaceb43\",\"path\":[\"columns\", \"col_Item ID\"]}')}",
+                "col_7": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"google_sheets\",\"line\":\"bbaceb43\",\"path\":[\"columns\", \"col_Item Name\"]}')}",
+                "col_8": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"foreach\",\"line\":\"68d16059\",\"path\":[\"quantity\"]}')}",
+                "col_10": "Pending"
+              }
+            },
+            "extended_input_schema": [
+              {
+                "control_type": "select",
+                "extends_schema": true,
+                "hint": "Select a sheet to add row to. The sheet must have at least one header row. <a href='https://docs.workato.com/connectors/google-sheets/action-add-row.html#setting-up-the-google-sheet' target='_blank'>Learn more</a>",
+                "label": "Sheet",
+                "name": "sheet",
+                "optional": false,
+                "pick_list": [
+                  [
+                    "Stock",
+                    "Stock"
+                  ],
+                  [
+                    "Entitlements",
+                    "Entitlements"
+                  ],
+                  [
+                    "Reservations",
+                    "Reservations"
+                  ],
+                  [
+                    "Salesforce Contact Setup",
+                    "Salesforce Contact Setup"
+                  ],
+                  [
+                    "Setup Checklist",
+                    "Setup Checklist"
+                  ]
+                ],
+                "toggle_field": {
+                  "control_type": "text",
+                  "label": "Sheet name",
+                  "toggle_hint": "Use sheet name",
+                  "extends_schema": true,
+                  "change_on_blur": true,
+                  "toggle_to_secondary_hint": "Use sheet name",
+                  "toggle_to_primary_hint": "Select a sheet",
+                  "hint": "Use <b>Sheet name</b> pill from the output of other Google Sheets’ triggers/actions. Or enter sheet name manually. The sheet must have at least 1 header row in input field.",
+                  "type": "string",
+                  "name": "sheet_name"
+                },
+                "toggle_hint": "Select a sheet",
+                "type": "string"
+              },
+              {
+                "extends_schema": false,
+                "hint": "Input values of the new row.",
+                "label": "Columns",
+                "name": "data",
+                "properties": [
+                  {
+                    "control_type": "text",
+                    "label": "Reservation ID",
+                    "type": "string",
+                    "name": "col_1",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Timestamp",
+                    "type": "string",
+                    "name": "col_2",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Employee ID",
+                    "type": "string",
+                    "name": "col_3",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Employee Name",
+                    "type": "string",
+                    "name": "col_4",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Employee Email",
+                    "type": "string",
+                    "name": "col_5",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Item ID",
+                    "type": "string",
+                    "name": "col_6",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Item Name",
+                    "type": "string",
+                    "name": "col_7",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Qty Reserved",
+                    "type": "string",
+                    "name": "col_8",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Jira Ticket",
+                    "type": "string",
+                    "name": "col_9",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Status",
+                    "type": "string",
+                    "name": "col_10",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  },
+                  {
+                    "control_type": "text",
+                    "label": "Notes",
+                    "type": "string",
+                    "name": "col_11",
+                    "optional": true,
+                    "sticky": true,
+                    "extends_schema": false
+                  }
+                ],
+                "type": "object"
+              }
+            ],
+            "comment": "Add a new row to the 'Reservations' sheet with details including reservation ID, employee information, item details, and status. Note that the Ruby formula for the timestamp is invalid.",
+            "uuid": "b45bced4-8e51-4127-98dc-9f9a46855bb5",
+            "skip": false
+          }
+        ],
+        "source": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"workato_recipe_function\",\"line\":\"9947224d\",\"path\":[\"parameters\", \"items\"]}')}",
+        "comment": "Iterate over the 'items' array provided in the function call parameters.",
+        "uuid": "dec37775-d210-45e5-8c62-a2316c0ac6e1",
+        "skip": false
+      },
+      {
+        "number": 6,
+        "provider": "workato_recipe_function",
+        "name": "return_result",
+        "as": "47c4c721",
+        "keyword": "action",
+        "input": {
+        },
+        "comment": "Return the reservation ID and its status ('Pending') as the result of the recipe function.",
+        "uuid": "a2a06d89-88a2-41f1-a981-27b7857a7608",
+        "skip": false
+      }
+    ],
+    "comment": "Trigger the recipe when a function call is executed with specific parameters.",
+    "uuid": "5dcbfcb1-2d72-4afe-89eb-aa64b9a6cd33",
+    "skip": false
+  },
+  "config": [
+    {
+      "keyword": "application",
+      "provider": "workato_recipe_function",
+      "skip_validation": false,
+      "account_id": null
+    },
+    {
+      "keyword": "application",
+      "provider": "workato_variable",
+      "skip_validation": false,
+      "account_id": null
+    },
+    {
+      "keyword": "application",
+      "provider": "google_sheets",
+      "skip_validation": false,
+      "account_id": {
+        "zip_name": "my_second_google_sheets_account.connection.json",
+        "name": "My second Google Sheets account",
+        "folder": ""
+      }
+    }
+  ]
+}
